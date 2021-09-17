@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0 user-scalable=no"
+		/>
+		<title>
+			Заполнение и печать сертификата о вакцинации против коронавируса
+		</title>
+
+		<meta name="msapplication-TileColor" content="#da532c" />
+		<meta name="theme-color" content="#ffffff" />
+
+		<link rel="stylesheet" href="./index.css" />
+
+		<script src="./qrcode.min.js"></script>
+		<script src="./render.js" defer></script>
+	</head>
+	<body>
+		<main class="main">
+			<div class="input-data">
+				<h2>Паспортные данные</h2>
+				<label for=""
+					><input
+						type="text"
+						placeholder="Фамилия"
+						name="surname"
+					/>Фамилия</label
+				>
+				<label for=""
+					><input
+						type="text"
+						placeholder="Имя"
+						name="forename"
+					/>Имя</label
+				>
+				<label for=""
+					><input
+						type="text"
+						placeholder="Отчество"
+						name="patronymic"
+					/>Отчество</label
+				>
+				<label for=""
+					><input
+						type="text"
+						placeholder="Фамилия по английски"
+						name="last-name"
+					/>Фамилия по английски</label
+				>
+				<label for=""
+					><input
+						type="text"
+						placeholder="Имя по английски"
+						name="first-name"
+					/>Имя по английски</label
+				>
+				<label for=""
+					><input
+						type="text"
+						placeholder="Отчество по английски"
+						name="father-name"
+					/>Отчество по английски</label
+				>
+				<label for=""
+					><input type="date" name="date" />Дата рождения</label
+				>
+				<label for="">
+					<input
+						type="text"
+						class="uppercase"
+						placeholder="Паспорт"
+						name="passport"
+					/>Паспорт
+				</label>
+				<label for="">
+					<input
+						type="text"
+						class="uppercase"
+						placeholder="Личный номер"
+						name="personal-number"
+					/>Личный номер
+				</label>
+
+				<h2>Информация о вакцинах</h2>
+
+				<label for="">
+					<select name="vaccine">
+						<option value="Russia">Россия</option>
+						<option value="China">Китай</option></select
+					>Наименование вакцины
+				</label>
+
+				<h3>1-ая вакцина</h3>
+
+				<label for=""
+					><input type="date" name="first-date" />Дата
+					проведения</label
+				>
+
+				<label for=""
+					><input
+						type="text"
+						placeholder="Номер партии"
+						name="first-vaccine"
+					/>Номер партии</label
+				>
+
+				<div class="doctors">
+					<label class="first-doctor-label" for="">
+						<select name="first-doctor"></select>
+						Вакцину назначил (ФИО врача)</label
+					>
+					<button class="addDoctor">✚</button>
+					<button class="removeDoctor">▬</button>
+				</div>
+
+				<h3>2-ая вакцина</h3>
+				<label for=""><input type="date" name="second-date" /></label>
+
+				<label for=""
+					><input
+						type="text"
+						placeholder="Номер партии"
+						name="second-vaccine"
+					/>Номер партии</label
+				>
+
+				<div class="doctors">
+					<label class="second-doctor-label" for="">
+						<select name="second-doctor"></select>
+						Вакцину назначил (ФИО врача)</label
+					>
+				</div>
+
+				<div class="buttons">
+					<button id="qr-code">Генерация QR-кода</button>
+					<button id="empty-page">Печать пустой страницы</button>
+					<button id="inner-side">Печать внутренней стороны</button>
+					<button id="front-side">Печать лицевой стороны</button>
+				</div>
+			</div>
+
+			<div class="print-data-inner">
+				<label id="family-name" class="uppercase"></label>
+				<label id="first-name" class="uppercase"></label>
+				<label id="middle-name" class="uppercase"></label>
+				<label id="birth"></label>
+				<label id="passport" class="uppercase"></label>
+				<label id="personal-number" class="uppercase"></label>
+				<label id="date-first-vaccination"></label>
+				<label id="first-vaccine" class="fs-9pt no-word-break"></label>
+				<label
+					id="first-doctor"
+					class="uppercase no-word-break"
+				></label>
+				<label id="date-second-vaccination"></label>
+				<label id="second-vaccine" class="fs-9pt no-word-break"></label>
+				<label
+					id="second-doctor"
+					class="uppercase no-word-break"
+				></label>
+			</div>
+
+			<div class="print-data-front">
+				<div class="organization">
+					Учреждение здравоохранения<br />«Березинская центральная
+					районная больница»<br />HEALTH CARE INSTITUTION<br />«BEREZINSKAYA
+					CENTRAL DISTRICT HOSPITAL»
+				</div>
+				<div class="qr-container"></div>
+			</div>
+		</main>
+
+		<div class="modal">
+			<div class="modal-inner-add">
+				<h2>Введите имя врача (русское / английское)</h2>
+				<textarea
+					placeholder="ФИО врача по русски / по-английски"
+					cols="30"
+					rows="5"
+				></textarea>
+				<div class="modal-buttons">
+					<button id="addNewDoctor">Добавить врача</button>
+					<button id="cancelAddingNewDoctor">Отмена</button>
+				</div>
+			</div>
+
+			<div class="modal-inner-remove">
+				<h2>Вы действительно хотите удалить врача <span></span>?</h2>
+				<div class="modal-buttons">
+					<button id="deleteDoctor">Да</button>
+					<button id="cancelDeleteDoctor">Нет</button>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
