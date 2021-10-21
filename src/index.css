@@ -86,12 +86,16 @@ button {
 	}
 }
 
-.doctors {
+.vaccines,
+.doctors,
+.second-vaccine-date,
+.is-not-subject-to-wrapper {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-end;
 }
 
+.vaccine-label,
 .first-doctor-label {
 	width: 340px;
 }
@@ -100,12 +104,27 @@ button {
 	width: 100%;
 }
 
+input[name='second-date'] {
+	width: 250px;
+}
+
+input[id='is-not-subject-to'] {
+}
+
+label[for='is-not-subject-to'] {
+	color: red;
+	font-size: 18px;
+	padding-left: 10px;
+}
+
+.addVaccine,
 .addDoctor {
 	width: 25px;
 	height: 25px;
 	color: green;
 }
 
+.removeVaccine,
 .removeDoctor {
 	width: 25px;
 	height: 25px;
@@ -367,6 +386,7 @@ label[id='second-doctor'] {
 
 /*    Модальное окно    */
 
+.modal-vaccine,
 .modal {
 	/* display: flex; */
 	display: none;
@@ -420,11 +440,15 @@ label[id='second-doctor'] {
 	padding: 5px 15px;
 }
 
+#addNewVaccine,
+#deleteVaccine,
 #addNewDoctor,
 #deleteDoctor {
 	color: green;
 }
 
+#cancelAddingNewVaccine,
+#cancelDeleteVaccine,
 #cancelAddingNewDoctor,
 #cancelDeleteDoctor {
 	color: red;
@@ -450,6 +474,14 @@ label[id='second-doctor'] {
 	.no-print {
 		display: none;
 	}
+}
+
+.mb-20 {
+	margin-bottom: 20px;
+}
+
+.align-center {
+	align-items: center !important;
 }
 
 /*   // Утилитарные классы    */

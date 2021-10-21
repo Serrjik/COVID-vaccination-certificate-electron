@@ -87,12 +87,16 @@
 
 				<h2>Информация о вакцинах</h2>
 
-				<label for="">
-					<select name="vaccine">
-						<option value="Russia">Россия</option>
-						<option value="China">Китай</option></select
-					>Наименование вакцины
-				</label>
+				<div class="vaccines">
+					<label class="vaccine-label">
+						<select name="vaccine">
+							<!-- <option value="Russia">Россия</option>
+							<option value="China">Китай</option> --></select
+						>Наименование вакцины
+					</label>
+					<button class="addVaccine">✚</button>
+					<button class="removeVaccine">▬</button>
+				</div>
 
 				<h3>1-ая вакцина</h3>
 
@@ -119,7 +123,15 @@
 				</div>
 
 				<h3>2-ая вакцина</h3>
-				<label for=""><input type="date" name="second-date" /></label>
+				<div class="second-vaccine-date align-center">
+					<label for=""
+						><input type="date" name="second-date"
+					/></label>
+					<div class="is-not-subject-to-wrapper align-center">
+						<input type="checkbox" id="is-not-subject-to" />
+						<label for="is-not-subject-to">не подлежит</label>
+					</div>
+				</div>
 
 				<label for=""
 					><input
@@ -174,6 +186,38 @@
 				<div class="qr-container"></div>
 			</div>
 		</main>
+
+		<div class="modal-vaccine">
+			<div class="modal-inner-add">
+				<h2>Введите русское название вакцины</h2>
+				<textarea
+					placeholder="Русское название вакцины"
+					cols="30"
+					rows="1"
+					class="mb-20"
+				></textarea>
+
+				<h2>Введите английское название вакцины</h2>
+				<textarea
+					placeholder="Английское название вакцины"
+					cols="30"
+					rows="1"
+				></textarea>
+
+				<div class="modal-buttons">
+					<button id="addNewVaccine">Добавить вакцину</button>
+					<button id="cancelAddingNewVaccine">Отмена</button>
+				</div>
+			</div>
+
+			<div class="modal-inner-remove">
+				<h2>Вы действительно хотите удалить вакцину <span></span>?</h2>
+				<div class="modal-buttons">
+					<button id="deleteVaccine">Да</button>
+					<button id="cancelDeleteVaccine">Нет</button>
+				</div>
+			</div>
+		</div>
 
 		<div class="modal">
 			<div class="modal-inner-add">

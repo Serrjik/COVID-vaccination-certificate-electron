@@ -1,19 +1,12 @@
 'use strict'
 
-// Константы.
-const CHINA_VACCINE_RU = `Вакцина против SARS-CoV-2 (клетки Веро)
-инактивированная, Sinopharm/BIBP,  КНР, `
-const CHINA_VACCINE_EN = `SARS-CoV-2 Vaccine (Vero Cell)
-Inactivated (InCoV), Sinopharm/BIBP, China, `
-const RUSSIN_VACCINE_RU = `Гам-КОВИД-Вак, Россия, `
-const RUSSIN_VACCINE_EN = `Gam-COVID-Vac, Russia, `
-
 // Блоки.
 const printDataInner = document.querySelector('.print-data-inner')
 const printDataFront = document.querySelector('.print-data-front')
+// Модальное окно для работы с вакцинами.
+const modalVaccine = document.querySelector('.modal-vaccine')
+// Модальное окно для работы с врачами.
 const modal = document.querySelector('.modal')
-const modalInnerAdd = document.querySelector('.modal-inner-add')
-const modalInnerRemove = document.querySelector('.modal-inner-remove')
 
 /* Инпуты. */
 // Паспортные данные.
@@ -34,10 +27,12 @@ const firstVaccineInput = document.querySelector('[name="first-vaccine"]')
 const firstDoctorInput = document.querySelector('[name="first-doctor"]')
 // 2-ая вакцина
 const secondDateInput = document.querySelector('[name="second-date"]')
+const isNotSubjectTo = document.getElementById('is-not-subject-to')
 const secondVaccineInput = document.querySelector('[name="second-vaccine"]')
 const secondDoctorInput = document.querySelector('[name="second-doctor"]')
 
-// Инпуты модального окна.
+// Инпуты модальных окон.
+const vaccineInputs = Array.from(modalVaccine.querySelectorAll('textarea'))
 const doctorInput = modal.querySelector('textarea')
 
 /* Надписи на внутренней стороне. */
@@ -58,6 +53,8 @@ const secondVaccine = document.querySelector('#second-vaccine')
 const secondDoctor = document.querySelector('#second-doctor')
 
 // Кнопки.
+const addVaccineButton = document.querySelector('.addVaccine')
+const removeVaccineButton = document.querySelector('.removeVaccine')
 const addDoctorButton = document.querySelector('.addDoctor')
 const removeDoctorButton = document.querySelector('.removeDoctor')
 const qrCodeButton = document.querySelector('#qr-code')
@@ -65,7 +62,13 @@ const emptyPageButton = document.querySelector('#empty-page')
 const innerSideButton = document.querySelector('#inner-side')
 const frontSideButton = document.querySelector('#front-side')
 
-// Кнопки модального окна.
+// Кнопки модального окна для работы с вакцинами.
+const addNewVaccine = document.getElementById('addNewVaccine')
+const cancelAddingNewVaccine = document.getElementById('cancelAddingNewVaccine')
+const deleteVaccine = document.getElementById('deleteVaccine')
+const cancelDeleteVaccine = document.getElementById('cancelDeleteVaccine')
+
+// Кнопки модального окна для работы с врачами.
 const addNewDoctor = document.getElementById('addNewDoctor')
 const cancelAddingNewDoctor = document.getElementById('cancelAddingNewDoctor')
 const deleteDoctor = document.getElementById('deleteDoctor')
@@ -92,59 +95,40 @@ const writeDB = () => {
 	writeFileSync(path.join(__dirname, 'database.json'), db)
 }
 
+// Функция заполняет поле "Наименование вакцины" на бланке.
 const getFullVaccineName = vaccineName => {
-	switch (vaccineName) {
-		case 'Russia':
-			firstVaccine.textContent = RUSSIN_VACCINE_RU
-			firstVaccine.textContent +=
-				firstVaccineInput.value.trim().toUpperCase() + ' / '
-			firstVaccine.textContent += RUSSIN_VACCINE_EN
-			firstVaccine.textContent += firstVaccineInput.value
-				.trim()
-				.toUpperCase()
+	const rusVaccineName = dbObject.vaccines[vaccineName][0]
+	const engVaccineName = dbObject.vaccines[vaccineName][1]
 
-			if (secondDateInput.valueAsNumber) {
-				secondVaccine.textContent = RUSSIN_VACCINE_RU
-				secondVaccine.textContent +=
-					secondVaccineInput.value.trim().toUpperCase() + ' / '
-				secondVaccine.textContent += RUSSIN_VACCINE_EN
-				secondVaccine.textContent += secondVaccineInput.value
-					.trim()
-					.toUpperCase()
-			} else {
-				secondVaccine.textContent = ''
-			}
+	firstVaccine.textContent = `${rusVaccineName}, `
+	firstVaccine.textContent +=
+		firstVaccineInput.value.trim().toUpperCase() + ' / '
+	firstVaccine.textContent += `${engVaccineName}, `
+	firstVaccine.textContent += firstVaccineInput.value.trim().toUpperCase()
 
-			break
-
-		case 'China':
-			firstVaccine.textContent = CHINA_VACCINE_RU
-			firstVaccine.textContent +=
-				firstVaccineInput.value.trim().toUpperCase() + ' / '
-			firstVaccine.textContent += CHINA_VACCINE_EN
-			firstVaccine.textContent += firstVaccineInput.value
-				.trim()
-				.toUpperCase()
-
-			if (secondDateInput.valueAsNumber) {
-				secondVaccine.textContent = CHINA_VACCINE_RU
-				secondVaccine.textContent +=
-					secondVaccineInput.value.trim().toUpperCase() + ' / '
-				secondVaccine.textContent += CHINA_VACCINE_EN
-				secondVaccine.textContent += secondVaccineInput.value
-					.trim()
-					.toUpperCase()
-			} else {
-				secondVaccine.textContent = ''
-			}
-
-			break
-
-		default:
-			firstVaccine.textContent = ''
-			break
+	if (secondDateInput.valueAsNumber && !isNotSubjectTo.checked) {
+		secondVaccine.textContent = `${rusVaccineName}, `
+		secondVaccine.textContent +=
+			secondVaccineInput.value.trim().toUpperCase() + ' / '
+		secondVaccine.textContent += `${engVaccineName}, `
+		secondVaccine.textContent += secondVaccineInput.value
+			.trim()
+			.toUpperCase()
+	} else {
+		secondVaccine.textContent = ''
 	}
 }
+
+// Заполнение селекта с вакцинами.
+const fillVaccines = () => {
+	vaccineInput.textContent = ''
+
+	dbObject.vaccines.forEach((vaccine, index) => {
+		const optionText = `<option value=${index}>${vaccine[0]} / ${vaccine[1]}</option>`
+		vaccineInput.innerHTML += optionText
+	})
+}
+fillVaccines()
 
 // Заполнение селектов с врачами.
 const fillDoctors = () => {
@@ -160,7 +144,7 @@ fillDoctors()
 
 const getDoctors = () => {
 	firstDoctor.textContent = firstDoctorInput.value
-	if (secondDateInput.valueAsNumber) {
+	if (secondDateInput.valueAsNumber && !isNotSubjectTo.checked) {
 		secondDoctor.textContent = secondDoctorInput.value
 	} else {
 		secondDoctor.textContent = ''
@@ -173,6 +157,8 @@ getDoctors()
 
 const closeModal = () => {
 	doctorInput.value = ''
+	vaccineInputs.forEach(item => (item.value = ''))
+	modalVaccine.style.display = 'none'
 	modal.style.display = 'none'
 }
 
@@ -239,17 +225,27 @@ firstDoctorInput.addEventListener('change', e => {
 	firstDoctor.textContent = e.target.value
 })
 
-secondDateInput.addEventListener('change', e => {
-	if (secondDateInput.valueAsNumber) {
+const getSecondDate = () => {
+	if (secondDateInput.valueAsNumber && !isNotSubjectTo.checked) {
 		dateSecondVaccination.textContent = new Date(
-			e.target.valueAsNumber
+			secondDateInput.valueAsNumber
 		).toLocaleDateString('ru')
+	} else if (isNotSubjectTo.checked) {
+		dateSecondVaccination.textContent = 'не подлежит'
 	} else {
 		dateSecondVaccination.textContent = ''
 	}
 
 	getFullVaccineName(vaccineInput.value)
 	getDoctors()
+}
+
+secondDateInput.addEventListener('change', getSecondDate)
+
+isNotSubjectTo.addEventListener('change', () => {
+	console.log('не подлежит')
+
+	getSecondDate()
 })
 
 // Изменение номера партии 2-ой вакцины.
@@ -263,7 +259,33 @@ secondDoctorInput.addEventListener('change', e => {
 	getDoctors()
 })
 
+addVaccineButton.addEventListener('click', () => {
+	const modalInnerAdd = modalVaccine.querySelector('.modal-inner-add')
+	const modalInnerRemove = modalVaccine.querySelector('.modal-inner-remove')
+	modalVaccine.style.display = 'flex'
+	modalInnerAdd.style.display = 'flex'
+	modalInnerRemove.style.display = 'none'
+	vaccineInputs[0].focus()
+})
+
+removeVaccineButton.addEventListener('click', () => {
+	const modalInnerAdd = modalVaccine.querySelector('.modal-inner-add')
+	const modalInnerRemove = modalVaccine.querySelector('.modal-inner-remove')
+	modalVaccine.style.display = 'flex'
+	modalInnerAdd.style.display = 'none'
+	modalInnerRemove.style.display = 'flex'
+
+	const deletedVaccine = `${dbObject.vaccines[vaccineInput.value][0]} / ${
+		dbObject.vaccines[vaccineInput.value][1]
+	}`
+
+	const headerCaptionVaccine = modalInnerRemove.querySelector('span')
+	headerCaptionVaccine.innerText = deletedVaccine
+})
+
 addDoctorButton.addEventListener('click', e => {
+	const modalInnerAdd = modal.querySelector('.modal-inner-add')
+	const modalInnerRemove = modal.querySelector('.modal-inner-remove')
 	modal.style.display = 'flex'
 	modalInnerAdd.style.display = 'flex'
 	modalInnerRemove.style.display = 'none'
@@ -271,6 +293,8 @@ addDoctorButton.addEventListener('click', e => {
 })
 
 removeDoctorButton.addEventListener('click', e => {
+	const modalInnerAdd = modal.querySelector('.modal-inner-add')
+	const modalInnerRemove = modal.querySelector('.modal-inner-remove')
 	modal.style.display = 'flex'
 	modalInnerAdd.style.display = 'none'
 	modalInnerRemove.style.display = 'flex'
@@ -282,20 +306,7 @@ removeDoctorButton.addEventListener('click', e => {
 })
 
 qrCodeButton.addEventListener('click', () => {
-	let vaccine = ''
-
-	switch (vaccineInput.value) {
-		case 'Russia':
-			vaccine = RUSSIN_VACCINE_EN
-			break
-
-		case 'China':
-			vaccine = CHINA_VACCINE_EN
-			break
-
-		default:
-			break
-	}
+	let vaccine = dbObject.vaccines[vaccineInput.value][1]
 
 	let text = `Учреждение здравоохранения
 «Березинская центральная районная больница»
@@ -309,9 +320,14 @@ HEALTH CARE INSTITUTION
 	text += vaccine + '\n'
 	text += dateFirstVaccination.textContent + ', '
 	text += firstVaccineInput.value.trim().toUpperCase() + '\n'
-	if (secondDateInput.valueAsNumber) {
+
+	if (secondDateInput.valueAsNumber && !isNotSubjectTo.checked) {
 		text += dateSecondVaccination.textContent + ', '
 		text += secondVaccineInput.value.trim().toUpperCase() + '\n'
+	}
+
+	if (isNotSubjectTo.checked) {
+		text += 'не подлежит'
 	}
 
 	const container = document.querySelector('.qr-container')
@@ -346,6 +362,52 @@ frontSideButton.addEventListener('click', () => {
 	window.print()
 })
 
+addNewVaccine.addEventListener('click', () => {
+	let newRusVaccine = vaccineInputs[0].value.trim()
+	let newEngVaccine = vaccineInputs[1].value.trim()
+	modalVaccine.style.display = 'none'
+	vaccineInputs.forEach(item => (item.value = ''))
+
+	if (newRusVaccine && newEngVaccine) {
+		// Если такой вакцины ещё нет в БД:
+		let isThereSuchVaccine = false
+
+		dbObject.vaccines.forEach(vaccine => {
+			if (vaccine[0] === newRusVaccine && vaccine[1] === newEngVaccine) {
+				isThereSuchVaccine = true
+			}
+		})
+
+		if (!isThereSuchVaccine) {
+			const newVaccine = [newRusVaccine, newEngVaccine]
+			dbObject.vaccines.push(newVaccine)
+
+			writeDB()
+			getDB()
+			fillVaccines()
+			getFullVaccineName(0)
+		}
+	}
+})
+
+deleteVaccine.addEventListener('click', () => {
+	let deletableVaccine = Number(vaccineInput.value)
+	console.log('deletableVaccine: ', deletableVaccine)
+	modalVaccine.style.display = 'none'
+
+	const newVaccines = dbObject.vaccines.filter(
+		(_, index) => deletableVaccine !== index
+	)
+
+	console.log('newVaccines: ', newVaccines)
+	dbObject.vaccines = newVaccines
+
+	writeDB()
+	getDB()
+	fillVaccines()
+	getFullVaccineName(0)
+})
+
 addNewDoctor.addEventListener('click', () => {
 	newDoctor = doctorInput.value.trim()
 	modal.style.display = 'none'
@@ -353,18 +415,16 @@ addNewDoctor.addEventListener('click', () => {
 
 	if (newDoctor && !dbObject.doctors.includes(newDoctor)) {
 		dbObject.doctors.push(newDoctor)
-	}
 
-	writeDB()
-	getDB()
-	fillDoctors()
-	getDoctors()
+		writeDB()
+		getDB()
+		fillDoctors()
+		getDoctors()
+	}
 })
 
 deleteDoctor.addEventListener('click', () => {
-	newDoctor = doctorInput.value.trim()
 	modal.style.display = 'none'
-	doctorInput.value = ''
 
 	const deletedDoctor = firstDoctorInput.value
 
@@ -380,5 +440,8 @@ deleteDoctor.addEventListener('click', () => {
 	getDoctors()
 })
 
+// Отмена действий в модальных окнах и их закрытие.
+cancelAddingNewVaccine.addEventListener('click', closeModal)
+cancelDeleteVaccine.addEventListener('click', closeModal)
 cancelAddingNewDoctor.addEventListener('click', closeModal)
 cancelDeleteDoctor.addEventListener('click', closeModal)
