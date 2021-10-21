@@ -367,8 +367,8 @@ label[id='second-doctor'] {
 	.qr-container {
 		width: 61mm;
 		height: 61mm;
-		right: 17mm;
-		bottom: 5mm;
+		right: 37mm; /* 17mm */
+		bottom: 15mm; /* 5mm */
 	}
 }
 
