@@ -231,7 +231,7 @@ const getSecondDate = () => {
 			secondDateInput.valueAsNumber
 		).toLocaleDateString('ru')
 	} else if (isNotSubjectTo.checked) {
-		dateSecondVaccination.textContent = 'не подлежит'
+		dateSecondVaccination.textContent = 'не подлежит / not subject'
 	} else {
 		dateSecondVaccination.textContent = ''
 	}
@@ -243,8 +243,6 @@ const getSecondDate = () => {
 secondDateInput.addEventListener('change', getSecondDate)
 
 isNotSubjectTo.addEventListener('change', () => {
-	console.log('не подлежит')
-
 	getSecondDate()
 })
 
@@ -327,7 +325,7 @@ HEALTH CARE INSTITUTION
 	}
 
 	if (isNotSubjectTo.checked) {
-		text += 'не подлежит'
+		text += 'не подлежит / not subject'
 	}
 
 	const container = document.querySelector('.qr-container')
