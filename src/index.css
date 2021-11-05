@@ -261,7 +261,7 @@ label[id='first-vaccine'] {
 
 @media print {
 	label[id='first-vaccine'] {
-		top: 78mm;
+		top: 79mm;
 		left: 107mm;
 		line-height: 1.1;
 		min-height: 14mm;
